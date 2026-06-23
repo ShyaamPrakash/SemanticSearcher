@@ -27,7 +27,7 @@ os.makedirs(data_fold,exist_ok=True)
 
 
 with st.sidebar:
-    no_of_retrievals=st.selectbox('No of results',[1,2,3,4,5])
+    no_of_retrievals=st.selectbox('No of chunks to retrive(Retrives more context)',[1,2,3,4,5])
     st.divider()
     try:
         uploaded_files=st.file_uploader('Upload the documents (pdf or txt)',type=['pdf','txt'],accept_multiple_files=True)
