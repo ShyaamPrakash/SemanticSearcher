@@ -92,6 +92,37 @@ if mode=='Question':
         st.divider()
 
 
+        with st.sidebar:
+    
+
+            st.subheader("📝 Paste Text")
+            
+            pasted_text = st.text_area(
+                "Paste your notes here:",
+                height=150,
+                key="paste_text_area"
+            )
+            
+            filename_input = st.text_input(
+                "Give it a name:",
+                placeholder="e.g., OS Notes",
+                key="text_filename"
+            )
+            
+            if st.button("Save", key="save_pasted_text", use_container_width=True):
+                if not pasted_text.strip():
+                    st.error("Paste some text first")
+                else:
+                    name = filename_input.strip() if filename_input.strip() else "pasted_notes"
+                    filename = f"{name}.txt"
+                    
+                    file_path = os.path.join(data_fold, filename)
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        f.write(pasted_text)
+                    
+                    st.success(f"✅ Saved as {filename}")
+
+
 
 
         st.write("Files in data folder")
