@@ -299,9 +299,9 @@ else:
             Generate 10 multiple choice questions from the given content.
             Format for each question:
             Question: [Clear, exam-style question]\n
-            A) [Option]
-            B) [Option]
-            C) [Option]
+            A) [Option]\n
+            B) [Option]\n
+            C) [Option]\n
             D) [Option]\n
             Correct Answer: [A/B/C/D]
             Explanation: [Why correct, why others are wrong]
