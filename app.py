@@ -232,6 +232,8 @@ else:
             if st.button(f"{past['mode']} - {', '.join(past['files'])}",use_container_width=True,key=f'history{i}'):
                 st.session_state.selected_record=past
                 st.rerun()
+
+
     if 'selected_record' in st.session_state:
         col1,col2=st.columns([9,1])
         with col1:
@@ -296,11 +298,11 @@ else:
                 "MCQs": """
             Generate 10 multiple choice questions from the given content.
             Format for each question:
-            Question: [Clear, exam-style question]
+            Question: [Clear, exam-style question]\n
             A) [Option]
             B) [Option]
             C) [Option]
-            D) [Option]
+            D) [Option]\n
             Correct Answer: [A/B/C/D]
             Explanation: [Why correct, why others are wrong]
             Guidelines:
@@ -347,9 +349,10 @@ else:
             def generate_study(generate_type,prompt,selected_files,content):
                 history="\n".join([item['output'] for item in st.session_state.revise_history if item['mode']==generate_type])[-3000:]
                 
-                prompt+='\n\n'+prompt_extender
+                
 
                 prompt=prompt+f'Notes:{content}\n history:{history} '
+                prompt+='\n\n'+prompt_extender
                 
                 with st.spinner('Generating...'):
                     MAX_TOKENS = 80000
