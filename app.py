@@ -67,126 +67,123 @@ elif mmode == "Strict Teacher Mode":
 elif mmode == "Gen Z Mode":
     prompt_extender = "Respond in a casual Gen Z style with modern slang, but keep it understandable."
 
+with st.sidebar:
 
+    no_of_retrievals=5
+    try:
+        uploaded_files=st.file_uploader('Upload the documents (pdf or txt)',type=['pdf','txt'],accept_multiple_files=True)
+        if uploaded_files:
+            st.write('Uploaded files')
+            for file in uploaded_files:
+                file_path=os.path.join(data_fold,file.name)
+                if file.name not in st.session_state.uploaded_files_list:
+                    with open(file_path,'wb') as f:
+                        f.write(file.getvalue())
+                    st.session_state.uploaded_files_list.append(file.name)
+        for no,file in enumerate(st.session_state.uploaded_files_list,1):
+                st.write(f'{no}.{file}')
+    except Exception as e:
+        print("Error:",e)
+    st.divider()
+
+
+
+    
+
+    st.subheader("📝 Paste Text")
+            
+    pasted_text = st.text_area(
+        "Paste your notes here:",
+        height=150,
+        key="paste_text_area"
+    )
+            
+    filename_input = st.text_input(
+       "Give it a name:",
+        placeholder="e.g., OS Notes",
+        key="text_filename"
+    )
+            
+    if st.button("Save", key="save_pasted_text", use_container_width=True):
+        if not pasted_text.strip():
+            st.error("Paste some text first")
+        else:
+            name = filename_input.strip() if filename_input.strip() else "pasted_notes"
+            filename = f"{name}.txt"
+                
+            file_path = os.path.join(data_fold, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(pasted_text)
+                    
+            st.success(f"✅ Saved as {filename}")
+
+
+
+    st.divider()
+    st.write("Files in data folder")
+    dfiles=sorted([f for f in os.listdir(data_fold) if f.endswith(('.pdf','.txt'))])
+    col1,col2=st.columns([3,1])
+    if dfiles:
+        for file in dfiles:
+            with col1:
+                st.write('📁',file)
+            with col2:
+                if st.button('🗑️',key=f'delete {file}'):
+                    os.remove(os.path.join(data_fold,file))
+                    if file in st.session_state.uploaded_files_list:
+                        st.session_state.uploaded_files_list.remove(file)
+                    st.success("File deleted successfully")
+                    st.rerun()
+    else:
+        st.write("No files found :(")
+
+
+
+
+
+
+    st.divider()
+    if st.button("Embed all files",key='embed_button',use_container_width=True,type='primary'):
+        with st.spinner("Your files are being embedded"):
+            try:
+                corpus=update_corpus()
+                if corpus:
+                    st.success("Files embedded successfully")
+                    load_cached_corpus.clear()
+                    st.rerun()
+                else:
+                    st.error("Failed to build corpus")
+            except Exception as e:
+                st.error(e)
+
+
+
+
+
+
+    st.divider()
+    if st.button("View analytics",key='analytics'):
+        st.write('Analytics')
+        corpus=load_corpus()
+        if corpus:
+            st.metric('Total files',corpus['metadata']['total_files'])
+            st.metric('Total chunks',corpus['metadata']['total_chunks'])
+            st.metric('Embeddings shape',corpus['metadata']['embedding_shape'])
+            st.subheader('Files in corpus')
+            for f in corpus['files']:
+                st.write(f)
+        else:   
+            st.write("Corpus not found")
 
 
 
 if mode=='Question':
-    with st.sidebar:
 
-        no_of_retrievals=5
-        try:
-            uploaded_files=st.file_uploader('Upload the documents (pdf or txt)',type=['pdf','txt'],accept_multiple_files=True)
-            if uploaded_files:
-                st.write('Uploaded files')
-                for file in uploaded_files:
-                    file_path=os.path.join(data_fold,file.name)
-                    if file.name not in st.session_state.uploaded_files_list:
-                        with open(file_path,'wb') as f:
-                            f.write(file.getvalue())
-                        st.session_state.uploaded_files_list.append(file.name)
-            for no,file in enumerate(st.session_state.uploaded_files_list,1):
-                    st.write(f'{no}.{file}')
-        except Exception as e:
-            print("Error:",e)
-        st.divider()
-
-
-        with st.sidebar:
-    
-
-            st.subheader("📝 Paste Text")
-            
-            pasted_text = st.text_area(
-                "Paste your notes here:",
-                height=150,
-                key="paste_text_area"
-            )
-            
-            filename_input = st.text_input(
-                "Give it a name:",
-                placeholder="e.g., OS Notes",
-                key="text_filename"
-            )
-            
-            if st.button("Save", key="save_pasted_text", use_container_width=True):
-                if not pasted_text.strip():
-                    st.error("Paste some text first")
-                else:
-                    name = filename_input.strip() if filename_input.strip() else "pasted_notes"
-                    filename = f"{name}.txt"
-                    
-                    file_path = os.path.join(data_fold, filename)
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(pasted_text)
-                    
-                    st.success(f"✅ Saved as {filename}")
-
-
-
-
-        st.write("Files in data folder")
-        dfiles=sorted([f for f in os.listdir(data_fold) if f.endswith(('.pdf','.txt'))])
-        col1,col2=st.columns([3,1])
-        if dfiles:
-            for file in dfiles:
-                with col1:
-                    st.write('📁',file)
-                with col2:
-                    if st.button('🗑️',key=f'delete {file}'):
-                        os.remove(os.path.join(data_fold,file))
-                        if file in st.session_state.uploaded_files_list:
-                            st.session_state.uploaded_files_list.remove(file)
-                        st.success("File deleted successfully")
-                        st.rerun()
-        else:
-            st.write("No files found :(")
-
-
-
-
-
-
-        st.divider()
-        if st.button("Embed all files",key='embed_button',use_container_width=True,type='primary'):
-            with st.spinner("Your files are being embedded"):
-                try:
-                    corpus=update_corpus()
-                    if corpus:
-                        st.success("Files embedded successfully")
-                        load_cached_corpus.clear()
-                        st.rerun()
-                    else:
-                        st.error("Failed to build corpus")
-                except Exception as e:
-                    st.error(e)
-
-
-
-
-
-
-        st.divider()
-        if st.button("View analytics",key='analytics'):
-            st.write('Analytics')
-            corpus=load_corpus()
-            if corpus:
-                st.metric('Total files',corpus['metadata']['total_files'])
-                st.metric('Total chunks',corpus['metadata']['total_chunks'])
-                st.metric('Embeddings shape',corpus['metadata']['embedding_shape'])
-                st.subheader('Files in corpus')
-                for f in corpus['files']:
-                    st.write(f)
-            else:   
-                st.write("Corpus not found")
 
             
     if 'messages' not in st.session_state:
             st.session_state.messages=[]
-
-
-
-        
+   
     corpus=load_cached_corpus()
 
     if corpus is None:
