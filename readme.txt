@@ -13,6 +13,10 @@ It uses semantic search to find the most relevant parts of your documents and th
 - Source citations with file and page numbers
 - Recent history based answers
 - Basic corpus analytics
+- Revise mode with a lot of different options where the embedded data is sent to api to get meaningful results
+- Increased overall function of the app through api calls since without those the app is less useful
+- Different modes for the model behaviour
+
 
 ## Tech Stack
 - Streamlit
