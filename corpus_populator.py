@@ -62,7 +62,7 @@ def extract_and_chunk(filepath):
     if not pages:
         return None
     for pageno,pgtext in pages.items():
-        chunks=chunker(pgtext,chunk_size=50,overlap=20)
+        chunks=chunker(pgtext,chunk_size=200,overlap=20)
         for chunk in chunks:
             chunk['pageno']=pageno+1
             chunk['file']=filename
